@@ -1,0 +1,97 @@
+{% extends 'default.html' %}
+
+{% load custom_filters %}
+
+{% load custom_tags %}
+
+
+{% block title %}
+Adverts
+{% endblock title %}
+
+{% block content %}
+
+          <h2>Объявления</h2>
+    <hr>
+    <br>
+        {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
+           <form action="" method="get">
+        <!--       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}-->
+               {{ filterset.form.as_p }}
+        <!--       {# Добавим кнопку отправки данных формы #}-->
+               <input type="submit" value="Найти" />
+           </form>
+
+
+        <br><br>
+          <hr>
+
+    {% for advert in object_list %}
+
+        <h2><a href="{{ advert.get_absolute_url }}">{{ advert.subject|truncatechars:45 }}</a></h2>
+        <p>Рубрика: {{ advert.filters }}</p>
+        <p>Цена: {{ advert.price|currency }}</p>
+        <p>Дата создания: {{ advert.created }}</p>
+        <p>Пользователь: {{ advert.user }}</p>
+
+<!--        {% if advert.images %}-->
+<!--            <p>Изображение: <img scr="{{ advert.images.url }}" style="width: 200px;" alt=""></p>-->
+<!--        {% endif %}-->
+
+<!--{% for photo in advert.images.photos.all %}-->
+
+<!--        1{% if photo.image %}-->
+<!--            1<p>Изображения: <img src="{{ photo.image.url }}" style="width: 90px;" alt=""></p>-->
+<!--        1{% endif %}-->
+
+        <p>
+            {% if advert.file %}
+            <p>Изображения: <img src="{{ advert.file.url }}" style="width: 90px;" alt=""></p>
+        {% endif %}
+        </p>
+
+<!--                {% if photo.image %}-->
+<!--                    <img src="{{ photo.image.url }}" style="width: 80px;">-->
+<!--                {% endif %}-->
+<!--            {% endfor %}-->
+        <hr>
+
+
+    {% endfor %}
+
+
+<!--{# Добавляем пагинацию на страницу #}-->
+
+<!--   {# Информация о предыдущих страницах #}-->
+   {% if page_obj.has_previous %}
+       <a href="?{% url_replace page=1 %}">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+<!--   {# Информация о текущей странице #}-->
+   {{ page_obj.number }}
+
+<!--   {# Информация о следующих страницах #}-->
+   {% if page_obj.has_next %}
+       <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+    <br>
+    <br>
+
+<!--<a href="http://127.0.0.1:8000/posts/create"><button>Создать</button></a> &nbsp;&nbsp;&nbsp;-->
+{% if perms.config.add_advert %}
+<a href="http://127.0.0.1:8000/create/"><button>Создать</button></a>
+{% endif %}
+&nbsp;&nbsp;&nbsp;
+    <br>
+    <br>
+
+{% endblock content %}
